@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clausura del Juego de Roblox</title>
+    <style>
+        /* Paleta y tipografía minimalista */
+        :root {
+            --bg-color: #0a0a0b;
+            --text-color: #ffffff;
+            --accent-muted: #888888;
+            --divider-color: #1f1f22;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+            width: 100%;
+            max-width: 800px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .timer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        /* Títulos formales */
+        h1 {
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent-muted);
+        }
+
+        h2 {
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #666666; /* Un poco más sutil que el título principal */
+        }
+
+        /* Línea separadora elegante */
+        .divider {
+            height: 1px;
+            width: 40%;
+            background-color: var(--divider-color);
+            margin: 0 auto;
+        }
+
+        /* Contenedores de los temporizadores */
+        .timer {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+        }
+
+        .number {
+            font-size: 5rem; /* Ligeramente reducido para acomodar dos temporizadores */
+            font-weight: 200;
+            line-height: 1;
+            font-variant-numeric: tabular-nums; 
+            letter-spacing: -0.02em;
+        }
+
+        .label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-muted);
+            margin-top: 1rem;
+        }
+
+        /* Mensajes al finalizar */
+        .expired-message {
+            display: none;
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            color: var(--text-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Diseño responsivo */
+        @media (max-width: 600px) {
+            .number { font-size: 3.5rem; }
+            .timer { gap: 1.5rem; }
+            .time-box { min-width: 70px; }
+            .main-wrapper { gap: 3rem; }
+            h1 { font-size: 0.9rem; }
+            h2 { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        
+        <!-- Temporizador 1: 4:00 PM -->
+        <div class="timer-section">
+            <h1>Clausura del Juego de Roblox</h1>
+            
+            <div class="timer" id="countdown-1">
+                <div class="time-box">
+                    <span class="number hours">00</span>
+                    <span class="label">Horas</span>
+                </div>
+                <div class="time-box">
+                    <span class="number minutes">00</span>
+                    <span class="label">Minutos</span>
+                </div>
+                <div class="time-box">
+                    <span class="number seconds">00</span>
+                    <span class="label">Segundos</span>
+                </div>
+            </div>
+
+            <div class="expired-message" id="expired-1">
+                La clausura ha comenzado
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Temporizador 2: 6:00 PM -->
+        <div class="timer-section">
+            <h2>Por si no llega el cube a las 4</h2>
+            
+            <div class="timer" id="countdown-2">
+                <div class="time-box">
+                    <span class="number hours">00</span>
+                    <span class="label">Horas</span>
+                </div>
+                <div class="time-box">
+                    <span class="number minutes">00</span>
+                    <span class="label">Minutos</span>
+                </div>
+                <div class="time-box">
+                    <span class="number seconds">00</span>
+                    <span class="label">Segundos</span>
+                </div>
+            </div>
+
+            <div class="expired-message" id="expired-2">
+                El tiempo de espera finalizó
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Función reutilizable para crear múltiples temporizadores
+        function setupTimer(targetHour, containerId, expiredId) {
+            const targetTime = new Date();
+            targetTime.setHours(targetHour, 0, 0, 0);
+
+            const container = document.getElementById(containerId);
+            const expiredMessage = document.getElementById(expiredId);
+            
+            const hoursEl = container.querySelector('.hours');
+            const minutesEl = container.querySelector('.minutes');
+            const secondsEl = container.querySelector('.seconds');
+
+            function update() {
+                const now = new Date();
+                const difference = targetTime.getTime() - now.getTime();
+
+                // Si ya pasó la hora objetivo, ocultar timer y mostrar mensaje
+                if (difference <= 0) {
+                    container.style.display = 'none';
+                    expiredMessage.style.display = 'block';
+                    return;
+                }
+
+                // Cálculos matemáticos
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                // Actualizar DOM
+                hoursEl.textContent = String(hours).padStart(2, '0');
+                minutesEl.textContent = String(minutes).padStart(2, '0');
+                secondsEl.textContent = String(seconds).padStart(2, '0');
+            }
+
+            // Ejecutar inmediatamente para evitar parpadeos y luego iniciar el intervalo
+            update();
+            setInterval(update, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Configurar el reloj de las 16:00 (4 PM)
+            setupTimer(16, 'countdown-1', 'expired-1');
+            
+            // Configurar el reloj de las 18:00 (6 PM)
+            setupTimer(18, 'countdown-2', 'expired-2');
+        });
+    </script>
+</body>
+</html>
