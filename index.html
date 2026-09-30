@@ -41,6 +41,7 @@
             width: 100%;
             max-width: 800px;
             animation: fadeIn 1.5s ease-out;
+            margin: auto;
         }
 
         .timer-section {
@@ -64,7 +65,7 @@
             font-weight: 400;
             letter-spacing: 0.25em;
             text-transform: uppercase;
-            color: #666666; /* Un poco más sutil que el título principal */
+            color: #666666;
         }
 
         /* Línea separadora elegante */
@@ -90,7 +91,7 @@
         }
 
         .number {
-            font-size: 5rem; /* Ligeramente reducido para acomodar dos temporizadores */
+            font-size: 4.5rem; /* Ajustado ligeramente para acomodar 3 relojes en pantalla */
             font-weight: 200;
             line-height: 1;
             font-variant-numeric: tabular-nums; 
@@ -122,7 +123,7 @@
 
         /* Diseño responsivo */
         @media (max-width: 600px) {
-            .number { font-size: 3.5rem; }
+            .number { font-size: 3rem; }
             .timer { gap: 1.5rem; }
             .time-box { min-width: 70px; }
             .main-wrapper { gap: 3rem; }
@@ -185,12 +186,39 @@
             </div>
         </div>
 
+        <div class="divider"></div>
+
+        <!-- Temporizador 3: 11:00 PM -->
+        <div class="timer-section">
+            <h2>Por si el cube se le olvida que se tenía meter</h2>
+            
+            <div class="timer" id="countdown-3">
+                <div class="time-box">
+                    <span class="number hours">00</span>
+                    <span class="label">Horas</span>
+                </div>
+                <div class="time-box">
+                    <span class="number minutes">00</span>
+                    <span class="label">Minutos</span>
+                </div>
+                <div class="time-box">
+                    <span class="number seconds">00</span>
+                    <span class="label">Segundos</span>
+                </div>
+            </div>
+
+            <div class="expired-message" id="expired-3">
+                Ya es demasiado tarde...
+            </div>
+        </div>
+
     </div>
 
     <script>
         // Función reutilizable para crear múltiples temporizadores
         function setupTimer(targetHour, containerId, expiredId) {
             const targetTime = new Date();
+            // Formato de 24 horas: 16 (4 PM), 18 (6 PM), 23 (11 PM)
             targetTime.setHours(targetHour, 0, 0, 0);
 
             const container = document.getElementById(containerId);
@@ -233,6 +261,9 @@
             
             // Configurar el reloj de las 18:00 (6 PM)
             setupTimer(18, 'countdown-2', 'expired-2');
+
+            // Configurar el reloj de las 23:00 (11 PM)
+            setupTimer(23, 'countdown-3', 'expired-3');
         });
     </script>
 </body>
